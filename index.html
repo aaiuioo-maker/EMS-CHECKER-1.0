@@ -153,6 +153,35 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 /* ときどきまばたき */
 .cc-eye { animation: cc-blink 4s infinite; }
 @keyframes cc-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+/* === GitHub のマーク（ヘッダー左上、オレンジのキャラクターの右） ===
+   横には動かず、その場で：タコの足をゆらゆら・ときどき首をかしげる・ときどき目をパチッ。タップすると1回転 */
+.gh-mascot { --gh-disc: #e6edf3; --gh-cat: #111827; --gh-text: #c9d1d9; }   /* ← ヘッダーの背景色（--surface）に合わせている */
+.gh-wrap { width: 50px; height: 46px; flex-shrink: 0; display: flex; justify-content: center; align-items: flex-end; margin-right: 6px; }
+.gh-mascot { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 46px; gap: 3px; text-decoration: none; }
+.gh-mascot svg { width: 24px; height: 24px; overflow: visible; }   /* オレンジのキャラクター（足先まで24px）と上下の端をそろえる */
+.gh-label { font-family: -apple-system, "Segoe UI", sans-serif; font-size: 7px; letter-spacing: 0.05em; color: var(--gh-text); opacity: 0.8; white-space: nowrap; }
+.gh-disc, .gh-dot { fill: var(--gh-disc); }
+.gh-cat { fill: var(--gh-cat); }
+.gh-tail-line { fill: none; stroke: var(--gh-cat); stroke-width: 0.8; stroke-linecap: round; }
+.gh-all { transform-box: view-box; transform-origin: 8px 8px; }
+.gh-head { transform-box: view-box; transform-origin: 8px 10.4px; animation: gh-tilt 5s ease-in-out infinite; }
+.gh-tail { transform-box: view-box; transform-origin: 6.5px 12.35px; animation: gh-wag 1.4s ease-in-out infinite alternate; }
+/* 目はふだん見せない（ロゴと同じ顔なし）。ときどき一瞬だけ開いてパチッ */
+.gh-eyes { fill: var(--gh-disc); transform-box: fill-box; transform-origin: center; animation: gh-wink 6s 2s infinite; }
+.gh-mascot.spin .gh-all { animation: gh-spin 0.7s cubic-bezier(0.34,1.4,0.64,1); }
+/* 2つのロゴの並びをそろえる：下の文字（Claude Code / GitHub）を同じ高さにし、絵はその上に下ぞろえで置く */
+.cc-wrap { height: 46px; align-items: flex-end; }
+.cc-mascot { height: 46px; justify-content: flex-end; padding-top: 0; gap: 3px; }
+@keyframes gh-tilt { 0%,60%,100% { transform: rotate(0); } 68% { transform: rotate(-9deg); } 78% { transform: rotate(-9deg); } 86% { transform: rotate(6deg); } 92% { transform: rotate(0); } }
+@keyframes gh-wag { from { transform: rotate(-14deg); } to { transform: rotate(12deg); } }
+@keyframes gh-wink { 0%,88%,100% { transform: scaleY(0); } 90%,95% { transform: scaleY(1); } }
+@keyframes gh-spin { 0% { transform: rotate(0) scale(1); } 50% { transform: rotate(180deg) scale(1.15); } 100% { transform: rotate(360deg) scale(1); } }
+/* スマホ幅でも1行に収まるよう、ヘッダーの左側を詰める */
+.header-left { gap: 2px; }
+.header-left .cc-wrap { width: 46px; }
+.header-left .gh-wrap { width: 36px; margin-right: 2px; }
+.header-left .header-title { font-size: 13px; }
+.header .chip-lbl { font-size: 11px; }
 </style>
 </head>
 <body>
@@ -189,40 +218,26 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       </g>
     </svg>
   </div>
-  <!-- Trump pixel character (SVG) -->
+  <!-- pixel mail carrier (SVG) -->
   <svg width="110" height="130" viewBox="0 0 22 26" xmlns="http://www.w3.org/2000/svg" style="image-rendering:pixelated;margin-bottom:8px;animation:bob 2s ease-in-out infinite">
-    <!-- hair (blond) -->
-    <rect x="4" y="1" width="14" height="3" fill="#f0c040"/>
-    <rect x="3" y="2" width="2" height="4" fill="#f0c040"/>
-    <rect x="17" y="2" width="2" height="3" fill="#f0c040"/>
-    <!-- face -->
-    <rect x="4" y="4" width="14" height="11" fill="#f4a460"/>
-    <!-- eyes -->
-    <rect x="7" y="7" width="2" height="2" fill="#2a1a00"/>
-    <rect x="13" y="7" width="2" height="2" fill="#2a1a00"/>
-    <!-- mouth smile -->
-    <rect x="7" y="12" width="8" height="1" fill="#cc4444"/>
-    <rect x="6" y="11" width="2" height="1" fill="#cc4444"/>
-    <rect x="14" y="11" width="2" height="1" fill="#cc4444"/>
-    <!-- suit (dark blue) -->
-    <rect x="4" y="15" width="14" height="9" fill="#1a2a5a"/>
-    <!-- tie (red) -->
-    <rect x="10" y="15" width="2" height="9" fill="#cc2222"/>
-    <rect x="9" y="15" width="4" height="2" fill="#cc2222"/>
-    <!-- arms -->
-    <rect x="1" y="15" width="3" height="7" fill="#1a2a5a"/>
-    <rect x="18" y="15" width="3" height="7" fill="#1a2a5a"/>
-    <!-- hands -->
-    <rect x="1" y="22" width="3" height="2" fill="#f4a460"/>
-    <rect x="18" y="22" width="3" height="2" fill="#f4a460"/>
-    <!-- legs -->
+    <rect x="4" y="1" width="14" height="3" fill="#1f4fa8"/>
+    <rect x="3" y="4" width="16" height="1" fill="#16397a"/>
+    <rect x="10" y="2" width="2" height="1" fill="#f5a623"/>
+    <rect x="4" y="5" width="14" height="10" fill="#f4c49a"/>
+    <rect x="7" y="8" width="2" height="2" fill="#2a1a00"/>
+    <rect x="13" y="8" width="2" height="2" fill="#2a1a00"/>
+    <rect x="7" y="12" width="8" height="1" fill="#b85a4a"/>
+    <rect x="6" y="11" width="1" height="1" fill="#b85a4a"/>
+    <rect x="15" y="11" width="1" height="1" fill="#b85a4a"/>
+    <rect x="4" y="15" width="14" height="9" fill="#2e5fb8"/>
+    <rect x="5" y="15" width="2" height="9" fill="#8a5a2b"/>
+    <rect x="14" y="19" width="6" height="5" fill="#b07a40"/>
+    <rect x="15" y="20" width="4" height="1" fill="#f5e6c8"/>
+    <rect x="1" y="15" width="3" height="7" fill="#2e5fb8"/>
+    <rect x="18" y="15" width="3" height="4" fill="#2e5fb8"/>
+    <rect x="1" y="22" width="3" height="2" fill="#f4c49a"/>
     <rect x="5" y="24" width="4" height="2" fill="#111"/>
     <rect x="13" y="24" width="4" height="2" fill="#111"/>
-    <!-- MAGA hat -->
-    <rect x="4" y="1" width="14" height="2" fill="#cc2222"/>
-    <rect x="5" y="0" width="12" height="1" fill="#cc2222"/>
-    <rect x="4" y="3" width="2" height="1" fill="#cc2222"/>
-    <rect x="6" y="2" width="6" height="1" fill="#fff"/>
   </svg>
   <div class="op-title">🇺🇸 米国EMSチェッカー</div>
   <div class="op-sub">関税・引受ルール対応版</div>
@@ -249,6 +264,37 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
           </g>
         </svg>
         <span class="cc-label">Claude Code</span>
+      </a>
+    </div>
+    <div class="gh-wrap">
+      <a class="gh-mascot" href="https://github.com/aaiuioo-maker/EMS-CHECKER-1.0" target="_blank" rel="noopener" title="GitHub で公開" aria-label="GitHub で公開">
+        <!-- GitHub のマーク（丸の中のネコ＋左に巻いたタコの足）。部品ごとに分けて、それぞれ動かしている -->
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <defs><clipPath id="ghClip"><circle cx="8" cy="8" r="8"/></clipPath></defs>
+          <g class="gh-all">
+            <circle class="gh-disc" cx="8" cy="8" r="8"/>
+            <g clip-path="url(#ghClip)">
+              <!-- 体（首から下。丸の下へつながる） -->
+              <path class="gh-cat" d="M6.75 10.3 C6.45 10.7 6.3 11.2 6.3 11.8 L6.3 15.1 Q6.3 15.6 6.8 15.6 L9.2 15.6 Q9.7 15.6 9.7 15.1 L9.7 11.8 C9.7 11.2 9.55 10.7 9.25 10.3 Z"/>
+              <!-- 頭と耳（首を中心にかしげる） -->
+              <g class="gh-head">
+                <path class="gh-cat" d="M4.15 4.75 C3.85 3.85 3.95 2.85 4.3 2.1 C4.3 2.1 5.05 1.95 6.35 2.9 C6.9 2.75 7.45 2.68 8 2.68 C8.55 2.68 9.1 2.75 9.65 2.9 C10.95 1.95 11.7 2.1 11.7 2.1 C12.05 2.85 12.15 3.85 11.85 4.75 C12.4 5.3 12.75 6.0 12.75 6.95 C12.75 9.75 10.95 10.45 8 10.55 C5.05 10.45 3.25 9.75 3.25 6.95 C3.25 6.0 3.6 5.3 4.15 4.75 Z"/>
+                <!-- まばたき用の目（ふだんは閉じていて、ときどきパチッと開く） -->
+                <rect class="gh-eyes" x="5.5" y="6.1" width="1" height="1.5" rx="0.5"/>
+                <rect class="gh-eyes" x="9.5" y="6.1" width="1" height="1.5" rx="0.5"/>
+              </g>
+              <!-- タコの足（付け根を中心にゆらゆら） -->
+              <g class="gh-tail">
+                <path class="gh-tail-line" d="M6.5 12.35 C5.3 12.55 4.65 12.0 4.25 11.25 C3.95 10.7 3.6 10.35 3.0 10.25"/>
+                <circle class="gh-dot" cx="5.5" cy="12.2" r="0.17"/>
+                <circle class="gh-dot" cx="4.75" cy="11.75" r="0.17"/>
+                <circle class="gh-dot" cx="4.25" cy="11.05" r="0.17"/>
+                <circle class="gh-dot" cx="3.7" cy="10.5" r="0.17"/>
+              </g>
+            </g>
+          </g>
+        </svg>
+        <span class="gh-label">GitHub</span>
       </a>
     </div>
     <div class="header-title">&#x1F1FA;&#x1F1F8; 米国EMSチェッカー</div>
@@ -403,7 +449,7 @@ async function fetchRate(){
     updateThresholds();calcFX();
   }catch(e){
     dot.className='rate-dot err';chip.textContent='エラー';
-    document.getElementById('rate-updated').textContent='取得失敗。タップで再試行。';
+    document.getElementById('rate-updated').textContent='自動取得できませんでした。レートを手入力するか、右上をタップで再試行。';
   }
 }
 document.getElementById('rate-input').addEventListener('input',function(){
@@ -417,7 +463,7 @@ function updateThresholds(){
   document.getElementById('thr100').textContent=r?Math.round(100*r).toLocaleString():'—';
   document.getElementById('thr800').textContent=r?Math.round(800*r).toLocaleString():'—';
 }
-var fxDir='jpy',amtStr='';
+var currentRate=0,fxDir='jpy',amtStr='';
 function setDir(d){
   fxDir=d;amtStr='';
   document.getElementById('dir-jpy').classList.toggle('active',d==='jpy');
@@ -592,7 +638,7 @@ fetchRate();
     canvas.width = img.width; canvas.height = img.height;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0);
-    var p=2, ox=26, oy=3;   // 1ドットの大きさと左上の位置（180pxアイコン。「米国EMS」の文字の上、角丸で欠けない位置）
+    var p=2, ox=52, oy=4;   // 1ドットの大きさと左上の位置（180pxアイコン。「米国EMS」の文字の上、iPhoneの丸い角で欠けない位置）
     var px=function(x,y,w,h,col){ctx.fillStyle=col;ctx.fillRect(ox+x*p,oy+y*p,w*p,h*p);};
     var o='#d97757';
     px(2,0,8,6,o); px(0,2,2,2,o); px(10,2,2,2,o);               // 体と両腕
@@ -603,6 +649,18 @@ fetchRate();
     if (favIcon) favIcon.href = url;
   };
   img.src = appleIcon.href;
+})();
+
+// GitHub のマーク：タップするとくるっと1回転（そのあと GitHub のページが別のタブで開く）
+(function ghMascot() {
+  const gh = document.querySelector('.gh-mascot');
+  if (!gh) return;
+  gh.addEventListener('pointerdown', function() {
+    gh.classList.remove('spin'); void gh.offsetWidth; gh.classList.add('spin');
+  });
+  gh.addEventListener('animationend', function(e) {
+    if (e.animationName === 'gh-spin') gh.classList.remove('spin');
+  });
 })();
 </script>
 </body>
