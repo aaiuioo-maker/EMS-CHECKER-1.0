@@ -218,6 +218,23 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 #ccMovie .ccm-box { width: 100%; max-width: 420px; display: grid; gap: 10px; }
 #ccMovie video { width: 100%; pointer-events: none; aspect-ratio: 1; background: #000; border: 3px double #f8f8f8; border-radius: 6px; }
 #ccMovie .ccm-close { padding: 11px; border-radius: 10px; border: none; background: #f8f8f8; color: #0b1120; font: 700 14px -apple-system, "Hiragino Sans", sans-serif; cursor: pointer; }
+
+/* ===== 使い方を声で説明（めたん→つむぎ→はう→小夜 の順番） ===== */
+.tut-btn{width:100%;margin-bottom:12px;padding:11px;border-radius:12px;border:1px solid #d97757;background:rgba(217,119,87,.18);color:#ffd2bf;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;-webkit-appearance:none}
+.tut-btn:active{transform:scale(.98)}
+body.tut .screen{padding-bottom:210px}
+.hl{outline:3px solid #e8a33a !important;outline-offset:3px;box-shadow:0 0 22px rgba(232,163,58,.8) !important;border-radius:12px}
+#tut{position:fixed;left:0;right:0;bottom:0;z-index:6000;display:none;justify-content:center;padding:0 10px calc(10px + env(safe-area-inset-bottom));pointer-events:none}
+body.tut #tut{display:flex}
+#tut .box{pointer-events:auto;width:100%;max-width:520px;background:#0b1120;color:#f8f8f8;border:3px double #f8f8f8;border-radius:8px;padding:8px 10px;box-shadow:0 -4px 20px rgba(0,0,0,.6)}
+#tut .row1{display:flex;gap:10px;align-items:center}
+#tut .who{flex:0 0 auto;text-align:center;font-size:11px;font-weight:700;color:#ffe8b0}
+#tutFace{display:block;width:42px;height:48px;margin:0 auto 2px;image-rendering:pixelated}
+#tutCap{flex:1;font-size:15px;font-weight:700;line-height:1.55;min-height:4.6em}
+#tut .row2{display:flex;gap:6px;margin-top:6px;align-items:center}
+#tut .row2 button{flex:1;font:inherit;font-size:13px;font-weight:700;color:#f1f5f9;background:#1e293b;border:1px solid #475569;border-radius:8px;padding:7px 2px;cursor:pointer}
+#tut .row2 #tutNo{flex:0 0 auto;font-size:11px;color:#94a3b8;padding:0 2px}
+#tut .credit{font-size:10px;color:#94a3b8;margin-top:4px;text-align:right}
 </style>
 </head>
 <body>
@@ -414,6 +431,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 
   <div class="screens">
     <div class="screen active" id="screen-flow">
+      <button class="tut-btn" id="tutBtn">🔊 使い方を声で聞く（4人で説明）</button>
       <div class="track" id="progress"></div>
       <div id="history-wrap"></div>
       <div id="flow-main"></div>
@@ -2188,6 +2206,197 @@ window.CC_EXTRA = [...BLOCKS, ...MOBS, ...MC2, ...MC3, ...MC4, ...MC5];
   pop.querySelector('.ccm-close').addEventListener('click', close);
   pop.addEventListener('click', e => { if (e.target === pop) close(); });
   video.addEventListener('ended', close);
+})();
+</script>
+<!-- 使い方を声で説明（めたん→つむぎ→はう→小夜 の順番に1つずつ読む） -->
+<div id="tut"><div class="box">
+  <div class="row1"><div class="who"><canvas id="tutFace" width="56" height="64" aria-hidden="true"></canvas><span id="tutName"></span></div><div id="tutCap"></div></div>
+  <div class="row2"><button id="tutPrev">◀ 前</button><button id="tutPlay">⏸ 止める</button><button id="tutNext">次 ▶</button><button id="tutEnd">✕ おわる</button><span id="tutNo"></span></div>
+  <div class="credit">声：VOICEVOX:四国めたん・春日部つむぎ・雨晴はう・小夜/SAYO</div>
+</div></div>
+<script>
+(function tutorial() {
+  const SPK = [
+    { name: 'めたん', pal: { H: '#e04b8f', D: '#c43a7a', d: '#f07ab0', S: '#ffe2cc', E: '#d9a020', K: '#2b2733', W: '#f4f0f0' }, map: [
+      '....HHHHHH....', '..HHHHHHHHHH..', '.HHHHHHHHHHHH.', '.HHHHHHHHHHHH.',
+      'DHHSSHSSHSSHHD', 'dHSSSSSSSSSSHd', 'DHSEESSSSEESHD', 'dHSEESSSSEESHd',
+      'DDSSSSSSSSSSDD', 'dd.SSSSSSSS.dd', 'DD..SSSSSS..DD', '.dd.KWWWWK.dd.',
+      '.DD.KKWWKK.DD.', '..d.KKKKKK.d..', '...KKKKKKKK...', '...KKKKKKKK...'] },
+    { name: 'つむぎ', pal: { H: '#f2c740', h: '#ffe08a', S: '#ffe2cc', E: '#7a4a2a', W: '#f4f4f4', R: '#e04848' }, map: [
+      '.....HHHH.....', '..HHHHhHHHHH..', '.HHHHHHHHHHHH.', 'HHHHHHHHHHHHHH',
+      'HHHSSHHSSHSHHH', 'HHSSSSSSSSSSHH', 'HHSEESSSSEESHH', 'HHSEESSSSEESHH',
+      'HHSSSSSSSSSSHH', 'HH.SSSSSSSS.HH', 'HH..SSSSSS..HH', 'HHH.WWRRWW.HHH',
+      'HHH.WWRRWW.HHH', '.HH.WWWWWW.HH.', '...WWWWWWWW...', '...WWWWWWWW...'] },
+    { name: 'はう', pal: { H: '#9ccbe8', C: '#ffffff', X: '#e04848', S: '#ffe2cc', E: '#4a7ab0', W: '#ffffff', P: '#f6b8c8' }, map: [
+      '...CCCCCCCC...', '..CCCCXCCCCC..', '.HHHHHHHHHHHH.', '.HHHHHHHHHHHH.',
+      'HHHSSHSSHSSHHH', 'HHSSSSSSSSSSHH', 'HHSEESSSSEESHH', 'HHSEESSSSEESHH',
+      '.HSSSSSSSSSSH.', '.H.SSSSSSSS.H.', '....SSSSSS....', '...PWWWWWWP...',
+      '..PPWWWWWWPP..', '..PPWWWWWWPP..', '..PPPWWWWPPP..', '..PPPWWWWPPP..'] },
+    { name: '小夜', pal: { H: '#8a5a3a', I: '#f2a0b0', S: '#ffe2cc', E: '#3a8a5a', G: '#e8d070', K: '#b04040' }, map: [
+      '.HH........HH.', '.HIH......HIH.', '.HHHHHHHHHHHH.', 'HHHHHHHHHHHHHH',
+      'HHHSSHSSHSSHHH', 'HHSSSSSSSSSSHH', 'HHSEESSSSEESHH', 'HHSEESSSSEESHH',
+      'HHSSSSSSSSSSHH', 'HH.SSSSSSSS.HH', '.H..SSSSSS..H.', '...GGGGGGGG...',
+      '..KKKKKKKKKK..', '..KKKKKKKKKK..', '..KKKKKKKKKK..', '..KKKKKKKKKK..'] },
+  ];
+  // [字幕, その場面の画面にする, その場面でする操作]。声は koe-tut/番号.wav（i 番目は SPK[i % 4] が読む）
+  // 字幕（と YOMI の読み）を変えたら声も作り直すこと（KOE_V を1つ上げる）
+  const KOE_V = 1;
+  // 引受チェックを、path の答え（'yes' / 'no'）まで進めた画面にする
+  const FLOW = (path, q) => () => { switchTab('flow'); reset(); path.forEach(a => answer(a)); markEl(q); };
+  // 円/ドル換算の画面にする（digits は打ちこんだ状態にしておく金額）
+  const FX = (q, digits) => () => { switchTab('fx'); setDir('jpy'); amtStr = digits || ''; renderAmt(); calcFX(); markEl(q); };
+  const STEPS = [
+    ['こんにちは。米国EMSチェッカーの使い方を、4人で順番に説明します。アメリカあての荷物を、関税のルールで受けられるかどうか調べるアプリです。', FLOW([], '.header-title')],
+    ['「引受チェック」では、画面の質問に「はい」か「いいえ」で答えていくと、受けられるかどうかが分かります。', FLOW([], '.q-card')],
+    ['1つ目は「書類・はがき・印刷物・EMS書類ですか？」。書類なら価格に関係なく、すべての郵便局で受けられます。', FLOW([], '.q-card'), () => press('yes', 4200)],
+    ['書類でなければ「いいえ」。2つ目は「100ドル以下の個人間の贈り物ですか？」。フリマやネット販売の荷物は「販売品」なので「いいえ」です。', FLOW([], '.q-card'), () => press('no', 1600)],
+    ['3つ目は「中身の価格が800ドルを超えますか？」。超えるときは関税の前払いはいりませんが、指定郵便局だけで受けます。', FLOW(['no', 'no'], '.q-card'), () => press('yes', 4800)],
+    ['800ドル以下の販売品なら、4つ目の「Zonosアプリで関税の前払いは済んでいますか？」に進みます。アプリは、お客さまご自身のスマホで操作します。', FLOW(['no', 'no'], '.q-card'), () => press('no', 1400)],
+    ['まだのときは、手続きの手順が出ます。このとおりにご案内してください。', FLOW(['no', 'no', 'no'], '.q-card'), () => press('no', 1200)],
+    ['前払いが済んでいれば、最後にラベルの「DDP」の表示を確かめます。表示がなければ「DDP」と手書きしてもらえば、指定郵便局で受けられます。', FLOW(['no', 'no', 'no', 'yes'], '.q-card'), () => press('no', 5200)],
+    ['やり直すときは、「最初からやり直す」を押します。', FLOW(['no', 'no', 'no', 'yes', 'no'], '.reset-btn')],
+    ['次は、下の「円/ドル換算」です。右上には今日のレートが自動で出ます。タップすると、もう一度取ってきます。', FX('.rate-chip')],
+    ['ここには、100ドルと800ドルが、今のレートで何円になるかが出ています。', FX('.thr-card')],
+    ['金額を打つと、ドルに直した金額と、どのルールになるかが出ます。たとえば、5万円と打ってみます。', FX('.fx-amount-wrap'), () => typeAmt('50000', 2600)],
+    ['100ドルから800ドルの間なので、「Zonos事前支払い必要」と出ました。', FX('#judgment-wrap', '50000')],
+    ['「ドル → 円」に切りかえると、ドルから円にも直せます。説明は以上です。おつかれさまでした。', FX('#dir-usd')],
+  ];
+  // 声の読み（VOICEVOX で koe-tut を作るとき・録音が読めないときに端末の声で読むときに使う）
+  const YOMI = [
+    'こんにちは。べいこく、イーエムエス、チェッカーの使い方を、4人で順番に説明します。アメリカあての荷物を、関税のルールで受けられるかどうか、調べるアプリです。',
+    'ひきうけチェックでは、画面の質問に、はいか、いいえで答えていくと、受けられるかどうかが分かります。',
+    '1つ目は、書類、はがき、印刷物、イーエムエス書類ですか。書類なら、価格に関係なく、すべての郵便局で受けられます。',
+    '書類でなければ、いいえ。2つ目は、100ドル以下の、個人間の贈り物ですか。フリマや、ネット販売の荷物は、販売品なので、いいえです。',
+    '3つ目は、中身の価格が、800ドルを超えますか。超えるときは、関税の前払いはいりませんが、指定郵便局だけで受けます。',
+    '800ドル以下の販売品なら、4つ目の、ゾノスアプリで、関税の前払いは済んでいますか、に進みます。アプリは、お客さまご自身のスマホで操作します。',
+    'まだのときは、手続きの手順が出ます。このとおりに、ご案内してください。',
+    '前払いが済んでいれば、最後に、ラベルの、ディーディーピーの表示を確かめます。表示がなければ、ディーディーピーと手書きしてもらえば、指定郵便局で受けられます。',
+    'やり直すときは、最初からやり直す、を押します。',
+    '次は、下の、えん、ドル換算です。右上には、今日のレートが自動で出ます。タップすると、もう一度取ってきます。',
+    'ここには、100ドルと、800ドルが、今のレートで何円になるかが出ています。',
+    '金額を打つと、ドルに直した金額と、どのルールになるかが出ます。たとえば、5万円と打ってみます。',
+    '100ドルから、800ドルの間なので、ゾノス、事前支払い必要、と出ました。',
+    'ドルから円に切りかえると、ドルから円にも直せます。説明は以上です。おつかれさまでした。'
+  ];
+  const $t = id => document.getElementById(id);
+  let tutOn = false, tutI = 0, tutPlaying = false, tutToken = null, tutSrc = null, talking = false, saved = null, ac = null, timers = [];
+  const koe = [];   // 声（デコード済み）。読めなかったときは端末の声で読む
+  function loadKoe() {
+    if (koe.length) return;
+    STEPS.forEach((st, i) => koe[i] = fetch('koe-tut/' + String(i).padStart(2, '0') + '.wav?v=' + KOE_V)
+      .then(r => r.ok ? r.arrayBuffer() : null).catch(() => null)
+      .then(ab => ab && new Promise(res => { try { ac.decodeAudioData(ab, b => res(b), () => res(null)); } catch (e) { res(null); } })));
+  }
+  function later(fn, ms) { timers.push(setTimeout(() => { if (tutOn) fn(); }, ms)); }
+  function markEl(q) {
+    unmark();
+    const el = document.querySelector(q);
+    if (el) { el.classList.add('hl'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }
+  function unmark() { document.querySelectorAll('.hl').forEach(e => e.classList.remove('hl')); }
+  // 「はい」「いいえ」のボタンを光らせてから押す
+  function press(ans, at) {
+    later(() => markEl(ans === 'yes' ? '.btn-yes' : '.btn-no'), at);
+    later(() => { answer(ans); markEl(document.querySelector('.rcard') ? '.rcard' : '.q-card'); }, at + 900);
+  }
+  // 数字のボタンを1つずつ光らせて押す
+  function typeAmt(digits, at) {
+    [...digits].forEach((ch, k) => later(() => {
+      const b = [...document.querySelectorAll('.numpad .np')].find(x => x.textContent === ch);
+      unmark(); if (b) b.classList.add('hl');
+      np(ch);
+    }, at + k * 450));
+    later(() => markEl('#judgment-wrap'), at + digits.length * 450 + 300);
+  }
+  function stopVoice() {
+    tutToken = null; talking = false;
+    if (tutSrc) { try { tutSrc.onended = null; tutSrc.stop(); } catch (e) {} tutSrc = null; }
+    try { speechSynthesis.cancel(); } catch (e) {}
+  }
+  function showStep(i) {
+    tutI = i;
+    timers.forEach(clearTimeout); timers = [];
+    const st = STEPS[i];
+    $t('tutCap').textContent = st[0];
+    $t('tutName').textContent = SPK[i % 4].name;
+    $t('tutNo').textContent = (i + 1) + '/' + STEPS.length;
+    st[1]();
+    if (st[2]) st[2]();
+  }
+  function playStep(i) {
+    stopVoice(); showStep(i);
+    if (!tutPlaying) return;
+    const token = tutToken = {};
+    const next = () => { if (tutToken !== token) return; talking = false;
+      setTimeout(() => { if (tutToken !== token) return; if (tutI < STEPS.length - 1) playStep(tutI + 1); else { tutPlaying = false; showPlay(); } }, 800); };
+    talking = true;
+    koe[i].then(b => {
+      if (tutToken !== token) return;
+      if (b) {
+        try { if (ac.state !== 'running') ac.resume(); } catch (e) {}
+        const s = ac.createBufferSource(); s.buffer = b; s.connect(ac.destination);
+        s.onended = next; tutSrc = s; s.start();
+      } else {
+        // 録音が読めないときは端末の声で読む
+        try { const u = new SpeechSynthesisUtterance(YOMI[i]); u.lang = 'ja-JP'; u.onend = next; speechSynthesis.speak(u); }
+        catch (e) { setTimeout(next, 3000); }
+      }
+    });
+  }
+  function showPlay() { $t('tutPlay').textContent = tutPlaying ? '⏸ 止める' : '▶ 聞く'; }
+  function startTut() {
+    try { _stopAll(); _initAudio(); } catch (e) {}
+    ac = _actx;
+    try { navigator.audioSession.type = 'playback'; } catch (e) {}   // iPhone の消音スイッチが入っていても声が出るように
+    loadKoe();
+    if (!tutOn) {
+      // 説明の前の画面・答え・金額を覚えておく（おわったら元にもどす）
+      saved = { tab: $t('screen-fx').classList.contains('active') ? 'fx' : 'flow', current: current, hist: hist.slice(), fxDir: fxDir, amtStr: amtStr, rate: currentRate };
+      // レートが取れていないときは、説明の間だけ 150円 で計算する
+      if (!currentRate) { const ri = $t('rate-input'); ri.value = '150'; ri.dispatchEvent(new Event('input')); }
+    }
+    tutOn = true; tutPlaying = true; document.body.classList.add('tut'); showPlay();
+    playStep(0);
+  }
+  function endTut() {
+    stopVoice(); tutOn = false; tutPlaying = false;
+    timers.forEach(clearTimeout); timers = [];
+    document.body.classList.remove('tut');
+    unmark();
+    if (saved) {
+      if (!saved.rate) { const ri = $t('rate-input'); ri.value = ''; ri.dispatchEvent(new Event('input')); }
+      current = saved.current; hist = saved.hist; renderProgress(); renderHistory(); renderMain();
+      setDir(saved.fxDir); amtStr = saved.amtStr; renderAmt(); calcFX();
+      switchTab(saved.tab); saved = null;
+    }
+    document.querySelectorAll('.screen').forEach(s => s.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+  $t('tutBtn').onclick = startTut;
+  $t('tutEnd').onclick = endTut;
+  $t('tutPlay').onclick = () => { tutPlaying = !tutPlaying; showPlay(); if (tutPlaying) playStep(tutI); else stopVoice(); };
+  $t('tutPrev').onclick = () => { if (tutI > 0) { tutPlaying ? playStep(tutI - 1) : showStep(tutI - 1); } };
+  $t('tutNext').onclick = () => { if (tutI < STEPS.length - 1) { tutPlaying ? playStep(tutI + 1) : showStep(tutI + 1); } };
+  // 読んでいる人の顔（しゃべっている間は口がパクパク・体がはずむ）
+  (function face() {
+    const c = $t('tutFace'), g = c.getContext('2d'), q = 4;
+    const P = (x, y, col) => { g.fillStyle = col; g.fillRect(x * q, y * q, q, q); };
+    function draw(now) {
+      requestAnimationFrame(draw);
+      if (!tutOn) return;
+      const t = now / 1000, sp = SPK[tutI % 4];
+      const bob = talking && Math.floor(t * 4) % 2 ? -1 : 0, blink = (t % 3.2) > 3.05;
+      g.clearRect(0, 0, c.width, c.height);
+      sp.map.forEach((row, y) => [...row].forEach((ch, x) => {
+        if (ch === '.') return;
+        if (ch === 'E' && blink) { if (y === 7) P(x, y + bob, '#5a3a3a'); return; }
+        P(x, y + bob, sp.pal[ch]);
+      }));
+      const open = talking && Math.floor(t * 9) % 3 !== 0;
+      if (open) { P(6, 9 + bob, '#8a2a3a'); P(7, 9 + bob, '#8a2a3a'); P(6, 10 + bob, '#e07080'); P(7, 10 + bob, '#8a2a3a'); }
+      else { P(6, 9 + bob, '#c0505a'); P(7, 9 + bob, '#c0505a'); }
+    }
+    requestAnimationFrame(draw);
+  })();
 })();
 </script>
 <!-- 更新した日時（GitHub に反映した日時が自動で出る）。オープニングの「タップして…」の下にだけ小さく出す。オープニングがなければ出さない -->
